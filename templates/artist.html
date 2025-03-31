@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Songs by {{ artist }}</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Songs by {{ artist }}</h1>
+      <nav>
+        <a href="/" class="back-link">← Back to all songs</a>
+      </nav>
+    </header>
+    <!-- Extra bottom margin added -->
+    <main id="song-list" style="margin-bottom: 300px;">
+      {% if music_files %}
+        {% for song in music_files %}
+        <article class="song" data-title="{{ song.title }}" data-artist="{{ song.artist }}" data-album="{{ song.album }}">
+          <figure>
+            <img class="cover" src="{{ song.cover_url }}" alt="Cover Art for {{ song.title }}">
+          </figure>
+          <div class="song-info">
+            <h2 class="song-title">{{ song.title }}</h2>
+            <p class="song-album">{{ song.album }}</p>
+          </div>
+          <button class="play-button" onclick="playSong('{{ song.filename }}', '{{ song.title }}', '{{ song.artist }}', '{{ song.cover_url }}')">Play</button>
+        </article>
+        {% endfor %}
+      {% else %}
+        <p class="no-songs">No songs found for this artist.</p>
+      {% endif %}
+    </main>
+  </div>
+  
+  <footer id="now-playing-bar">
+    <div id="now-playing-left">
+      <div id="now-playing-cover-container">
+        <img id="now-playing-cover" src="/static/default_cover.jpg" alt="Current Cover Art">
+      </div>
+      <div id="now-playing-info">
+        <h3 id="now-playing-title">No song playing</h3>
+        <p id="now-playing-artist"></p>
+      </div>
+    </div>
+    <div id="controls">
+      <button id="play-pause-button" onclick="togglePlay()">Play</button>
+      <div id="progress-container">
+        <span class="label">Progress</span>
+        <input type="range" id="progress-bar" value="0" min="0" max="100" aria-label="Song Progress">
+      </div>
+      <div id="volume-container">
+        <span class="label">Volume</span>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="{{ current_volume }}" aria-label="Volume Control">
+      </div>
+    </div>
+  </footer>
+  
+  <audio id="audio-player" ontimeupdate="updateProgress()" onended="songEnded()"></audio>
+  <script src="/static/script.js"></script>
+</body>
+</html>

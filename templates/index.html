@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Music Player</title>
+  <!-- Using Roboto for a modern look -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Super Music Player</h1>
+      <input type="text" id="search-input" placeholder="Search songs, artists, albums..." aria-label="Search songs">
+    </header>
+    
+    <nav id="back-button" class="hidden">
+      <button onclick="resetFilter()">← Back to all songs</button>
+    </nav>
+    
+    <!-- Added extra bottom margin for better accessibility -->
+    <main id="song-list" style="margin-bottom: 300px;">
+      {% for song in music_files %}
+      <article class="song" data-title="{{ song.title }}" data-artist="{{ song.artist }}" data-album="{{ song.album }}" data-filename="{{ song.filename }}">
+        <figure>
+          <img class="cover" src="{{ song.cover_url }}" alt="Cover Art for {{ song.title }}">
+        </figure>
+        <div class="song-info">
+          <h2 class="song-title">{{ song.title }}</h2>
+          <p class="song-artist">
+            <a href="#" class="artist-link" data-artist="{{ song.artist }}">{{ song.artist }}</a>
+          </p>
+          <p class="song-album">{{ song.album }}</p>
+        </div>
+        <button class="play-button" onclick="playSongFromElement(this)">Play</button>
+      </article>
+      {% endfor %}
+    </main>
+  </div>
+  
+  <footer id="now-playing-bar">
+    <div id="now-playing-left">
+      <div id="now-playing-cover-container">
+        <img id="now-playing-cover" src="/static/default_cover.jpg" alt="Current Cover Art">
+      </div>
+      <div id="now-playing-info">
+        <h3 id="now-playing-title">No song playing</h3>
+        <p id="now-playing-artist"></p>
+      </div>
+    </div>
+    <div id="now-playing-right">
+      <button id="prev-button" onclick="prevSong()">Prev</button>
+      <button id="play-pause-button" onclick="togglePlay()">Play</button>
+      <button id="next-button" onclick="nextSong()">Next</button>
+      <button id="loop-button" onclick="toggleLoop()">Loop Off</button>
+      <button id="shuffle-button" onclick="toggleShuffle()">Shuffle Off</button>
+      <div id="progress-container">
+        <span class="label" id="time-indicator">0:00 / 0:00</span>
+        <input type="range" id="progress-bar" value="0" min="0" max="100" aria-label="Song Progress">
+      </div>
+      <div id="volume-container">
+        <span class="label">Volume</span>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="{{ current_volume }}" aria-label="Volume Control">
+      </div>
+    </div>
+  </footer>
+  
+  <audio id="audio-player" ontimeupdate="updateProgress()" onended="songEnded()"></audio>
+  <script src="/static/script.js"></script>
+</body>
+</html>
